@@ -1,4 +1,6 @@
-exports.getLogin = (req, res, next) => {
+const User = require('../models/user');
+
+exports.getLogin = (req, res) => {
   // Without library
   // console.log(req.get('Cookie'));
   // With library
@@ -6,11 +8,20 @@ exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    isAuthenticated: req.cookies.loggedIn === 'true',
+    isAuthenticated: false,
   });
 };
 
-exports.postLogin = (req, res, next) => {
-  res.setHeader('Set-Cookie', 'loggedIn=true; Expires=');
-  res.redirect('/');
+exports.postLogin = (req, res) => {
+  User.find({ email: req.body.email })
+    .then((users) => {
+      if (users.length > 0) {
+        req.session.user = users[0];
+        req.session.isLoggedIn = true;
+        res.redirect('/');
+      } else {
+        res.redirect('/login');
+      }
+    })
+    .catch((err) => console.log(err));
 };

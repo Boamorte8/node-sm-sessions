@@ -1,11 +1,11 @@
 const path = require('path');
 const express = require('express');
-const cookieParser = require('cookie-parser');
 
 require('./util/env');
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 const { connectDB } = require('./util/database');
+const { getSession } = require('./util/sessions');
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,20 +18,15 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(getSession(process.env.MONGODB_URL));
 
-const USER_ID = '634f57ca031018319f30bde8';
-
-app.use((req, res, next) => {
-  User.findById(USER_ID)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
-});
+// app.use((req, res, next) => {
+//   console.log(req.user);
+//   console.log(req.session.user);
+//   next();
+// });
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
