@@ -24,9 +24,8 @@ app.use(getSession(process.env.MONGODB_URL));
 
 app.use((req, res, next) => {
   const user = req.session.user;
-  if (!user) {
-    return next();
-  }
+  // if (!user) return res.redirect('/signup');
+  if (!user) return next();
   User.findById(user._id)
     .then((user) => {
       req.user = user;
@@ -42,20 +41,6 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 connectDB(process.env.MONGODB_URL).then(() => {
-  User.findOne()
-    .then((user) => {
-      if (!user) {
-        const user = new User({
-          name: 'Esteban',
-          email: 'esteban@test.com',
-          cart: {
-            items: [],
-          },
-        });
-        user.save();
-      }
-      app.listen(PORT);
-      console.log(`Server listening at port ${PORT}`);
-    })
-    .catch((err) => console.log(err));
+  app.listen(PORT);
+  console.log(`Server listening at port ${PORT}`);
 });

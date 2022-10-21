@@ -1,0 +1,1 @@
+exports.SALT = 12;
