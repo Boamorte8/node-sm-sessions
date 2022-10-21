@@ -22,11 +22,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(getSession(process.env.MONGODB_URL));
 
-// app.use((req, res, next) => {
-//   console.log(req.user);
-//   console.log(req.session.user);
-//   next();
-// });
+app.use((req, res, next) => {
+  const user = req.session.user;
+  if (!user) {
+    return next();
+  }
+  User.findById(user._id)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);

@@ -18,10 +18,18 @@ exports.postLogin = (req, res) => {
       if (users.length > 0) {
         req.session.user = users[0];
         req.session.isLoggedIn = true;
-        res.redirect('/');
+        req.session.save(() => {
+          res.redirect('/');
+        });
       } else {
         res.redirect('/login');
       }
     })
     .catch((err) => console.log(err));
+};
+
+exports.postLogout = (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
 };
