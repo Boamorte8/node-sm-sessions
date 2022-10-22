@@ -8,10 +8,11 @@ exports.getLogin = (req, res) => {
   // console.log(req.get('Cookie'));
   // With library
   // console.log(req.cookies);
+  let message = req.flash('error');
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    isAuthenticated: false,
+    errorMessage: message.length > 0 ? message : null,
   });
 };
 
@@ -21,10 +22,16 @@ exports.postLogin = (req, res) => {
   if (!!email && !!password) {
     User.findOne({ email })
       .then((userByEmail) => {
-        if (!userByEmail) return res.redirect('/login');
+        if (!userByEmail) {
+          req.flash('error', 'Invalid email or password');
+          return res.redirect('/login');
+        }
         compare(password, userByEmail.password)
           .then((matchPassword) => {
-            if (!matchPassword) return res.redirect('/login');
+            if (!matchPassword) {
+              req.flash('error', 'Invalid email or password');
+              return res.redirect('/login');
+            }
 
             session.user = userByEmail;
             session.isLoggedIn = true;
@@ -39,6 +46,7 @@ exports.postLogin = (req, res) => {
       })
       .catch((err) => console.log(err));
   } else {
+    req.flash('error', 'Invalid email or password');
     res.redirect('/login');
   }
 };
@@ -50,10 +58,11 @@ exports.postLogout = (req, res) => {
 };
 
 exports.getSignup = (req, res) => {
+  let message = req.flash('error');
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    isAuthenticated: false,
+    errorMessage: message.length > 0 ? message : null,
   });
 };
 
@@ -62,7 +71,10 @@ exports.postSignup = (req, res) => {
   if (!!name && !!email && !!password && password === confirmPassword) {
     User.findOne({ email })
       .then((userDoc) => {
-        if (!!userDoc) return res.redirect('/signup');
+        if (!!userDoc) {
+          req.flash('error', 'Email already in use');
+          return res.redirect('/signup');
+        }
         return hash(password, SALT)
           .then((hashedPassword) => {
             const user = new User({
@@ -81,6 +93,7 @@ exports.postSignup = (req, res) => {
       })
       .catch((err) => console.log(err));
   } else {
+    req.flash('error', 'All fields are required');
     res.redirect('/signup');
   }
 };

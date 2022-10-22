@@ -1,5 +1,7 @@
 const path = require('path');
 const express = require('express');
+const csrf = require('csurf');
+const flash = require('connect-flash');
 
 require('./util/env');
 const errorController = require('./controllers/error');
@@ -10,6 +12,7 @@ const { getSession } = require('./util/sessions');
 const PORT = process.env.PORT || 3000;
 
 const app = express();
+const csrfProtection = csrf();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -21,6 +24,8 @@ const authRoutes = require('./routes/auth');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(getSession(process.env.MONGODB_URL));
+// app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
   const user = req.session.user;
@@ -32,6 +37,12 @@ app.use((req, res, next) => {
       next();
     })
     .catch((err) => console.log(err));
+});
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  // res.locals.csrfToken = req.csrfToken();
+  next();
 });
 
 app.use('/admin', adminRoutes);

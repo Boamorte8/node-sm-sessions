@@ -7,3 +7,6 @@ This project is to apply the knowledge of the course of [Udemy](https://www.udem
 - SQL using [sequelize](http://docs.sequelizejs.com/)
 - MongoDB using first mongoDB driver after Mongoose
 - Sessions with Cookies and Sessions
+- Authentication with bcrypt
+- Security against CSRF attacks with csurf (This is deprecated)
+-
