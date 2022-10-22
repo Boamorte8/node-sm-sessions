@@ -1,7 +1,27 @@
 const { compare, hash } = require('bcrypt');
+const nodemailer = require('nodemailer');
+// const sendgridTransport = require('nodemailer-sendgrid-transport');
 
 const { SALT } = require('../constants/salt');
 const User = require('../models/user');
+
+const transporter = nodemailer.createTransport(
+  // With mailtrap
+  {
+    host: 'smtp.mailtrap.io',
+    port: 2525,
+    auth: {
+      user: '266a11247b08da',
+      pass: '4c28dbd3540dfd',
+    },
+  }
+  // With SendGrid
+  // sendgridTransport({
+  //   auth: {
+  //     api_key: process.env.SENDGRID_KEY,
+  //   },
+  // })
+);
 
 exports.getLogin = (req, res) => {
   // Without library
@@ -89,7 +109,14 @@ exports.postSignup = (req, res) => {
           })
           .then((result) => {
             res.redirect('/login');
-          });
+            return transporter.sendMail({
+              to: email,
+              from: 'shop@node-complete.com',
+              subject: 'Signup successful!',
+              html: '<h1>You succesfully signed up!</h1>',
+            });
+          })
+          .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
   } else {
