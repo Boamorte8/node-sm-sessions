@@ -10,3 +10,4 @@ This project is to apply the knowledge of the course of [Udemy](https://www.udem
 - Authentication with bcrypt
 - Security against CSRF attacks with csurf (This is deprecated)
 - Send emails with SendGrid o Mailtrap
+- Validate post requests with express-validator

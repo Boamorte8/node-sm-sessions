@@ -1,4 +1,4 @@
-const path = require('path');
+const { body } = require('express-validator');
 
 const express = require('express');
 
@@ -14,11 +14,43 @@ router.get('/add-product', isAuth, adminController.getAddProduct);
 router.get('/products', isAuth, adminController.getProducts);
 
 // /admin/add-product => POST
-router.post('/add-product', isAuth, adminController.postAddProduct);
+router.post(
+  '/add-product',
+  isAuth,
+  [
+    body('title', 'Please enter at least 6 characters')
+      .isString()
+      .isLength({ min: 6 })
+      .trim(),
+    body('imageUrl', 'Please enter a valid url').isURL().trim(),
+    body('price', 'Please enter a valid price').isNumeric().trim(),
+    body('description', 'Please enter at least 12 characters')
+      .isString()
+      .isLength({ min: 12, max: 400 })
+      .trim(),
+  ],
+  adminController.postAddProduct
+);
 
 router.get('/edit-product/:productId', isAuth, adminController.getEditProduct);
 
-router.post('/edit-product', isAuth, adminController.postEditProduct);
+router.post(
+  '/edit-product',
+  [
+    body('title', 'Please enter at least 6 characters')
+      .isString()
+      .isLength({ min: 6 })
+      .trim(),
+    body('imageUrl', 'Please enter a valid url').isURL().trim(),
+    body('price', 'Please enter a valid price').isNumeric().trim(),
+    body('description', 'Please enter at least 12 characters')
+      .isString()
+      .isLength({ min: 12, max: 400 })
+      .trim(),
+  ],
+  isAuth,
+  adminController.postEditProduct
+);
 
 router.post('/delete-product', isAuth, adminController.postDeleteProduct);
 
