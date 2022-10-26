@@ -11,3 +11,5 @@ This project is to apply the knowledge of the course of [Udemy](https://www.udem
 - Security against CSRF attacks with csurf (This is deprecated)
 - Send emails with SendGrid o Mailtrap
 - Validate post requests with express-validator
+- Handle errors
+  - If you pass an error to next() he goes directly to handle error middleware. And you can have more than one

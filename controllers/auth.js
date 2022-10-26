@@ -73,7 +73,11 @@ exports.postLogin = (req, res) => {
           res.redirect('/login');
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postLogout = (req, res) => {
@@ -127,7 +131,11 @@ exports.postSignup = (req, res) => {
         html: '<h1>You successfully signed up!</h1>',
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getReset = (req, res) => {
@@ -170,7 +178,11 @@ exports.postReset = (req, res) => {
           });
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
   } else {
     req.flash('error', 'Email is required');
     res.redirect('/reset');
@@ -199,7 +211,11 @@ exports.getNewPassword = (req, res) => {
           res.redirect('/reset');
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
   } else {
     req.flash('error', 'Invalid request');
     res.redirect('/reset');
@@ -241,9 +257,17 @@ exports.postNewPassword = (req, res) => {
               html: '<h1>You successfully reset your password!</h1>',
             });
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+          });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
   } else {
     if (!userId || !token) {
       req.flash('error', 'Invalid request');
