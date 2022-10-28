@@ -1,1 +1,0 @@
-exports.SALT = 12;
