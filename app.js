@@ -23,6 +23,7 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(fileHandler);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
